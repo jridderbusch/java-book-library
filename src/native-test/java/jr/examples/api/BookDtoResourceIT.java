@@ -1,8 +1,8 @@
-package jr.examples;
+package jr.examples.api;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class ExampleResourceIT extends ExampleResourceTest {
+class BookDtoResourceIT extends BookDtoResourceTest {
     // Execute the same tests but in packaged mode.
 }
