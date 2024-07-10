@@ -28,7 +28,7 @@ public class BookService {
                 || bookRequest.getGenre() == null
                 || bookRequest.getPrice() == null
                 || bookRequest.getAuthorId() == null)
-            throw new IllegalArgumentException("Mandatory fields are missing.");
+            throw new IllegalArgumentException("Mandatory fields are missing");
 
         var author = authorRepository.findById(bookRequest.getAuthorId());
         assureAuthorExists(author);
@@ -58,7 +58,7 @@ public class BookService {
                 || bookRequest.getGenre() == null
                 || bookRequest.getPrice() == null
                 || bookRequest.getAuthorId() == null)
-            throw new IllegalArgumentException("Mandatory fields are missing.");
+            throw new IllegalArgumentException("Mandatory fields are missing");
 
         var bookEntity = bookRepository.findById(id);
         if (bookEntity == null)

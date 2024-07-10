@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -28,8 +29,12 @@ public class AuthorController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response createAuthor(CreateAuthorRequest authorRequest) {
-        var bookDto = authorService.createAuthor(authorRequest);
-        return Response.ok(bookDto).build();
+        try {
+            var authorDto = authorService.createAuthor(authorRequest);
+            return Response.ok(authorDto).build();
+        } catch (IllegalArgumentException e) {
+            return responseUtils.badRequest(e.getMessage());
+        }
     }
 
     @GET
@@ -60,10 +65,14 @@ public class AuthorController {
         if (id == null)
             return responseUtils.badRequest("ID cannot be empty");
 
-        var updatedAuthorDto = authorService.updateAuthor(id, authorRequest);
-        if (updatedAuthorDto != null)
+        try {
+            var updatedAuthorDto = authorService.updateAuthor(id, authorRequest);
             return Response.ok(updatedAuthorDto).build();
-        return responseUtils.notFound("Author ID does not exist");
+        } catch (NotFoundException e) {
+            return responseUtils.notFound(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return responseUtils.badRequest(e.getMessage());
+        }
     }
 
     @DELETE
