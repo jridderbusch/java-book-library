@@ -17,7 +17,7 @@ public class BookDto {
     @Schema(description = "The genre of the book.", required = true)
     private String genre;
     @Schema(description = "The price of the book.", required = true)
-    private double price;
+    private Double price;
     @Schema(description = "Reference to the author of the book.", required = true)
     private Long authorId;
 }

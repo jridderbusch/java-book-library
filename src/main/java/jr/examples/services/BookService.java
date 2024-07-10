@@ -2,8 +2,11 @@ package jr.examples.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import jr.examples.controllers.model.BookDto;
-import jr.examples.controllers.model.CreateBookRequest;
+import jr.examples.controllers.model.create.CreateBookRequest;
+import jr.examples.controllers.model.update.UpdateBookRequest;
+import jr.examples.entities.Author;
 import jr.examples.entities.Book;
 import jr.examples.repositories.AuthorRepository;
 import jr.examples.repositories.BookRepository;
@@ -20,10 +23,15 @@ public class BookService {
     BookMapper bookMapper;
 
     public BookDto createBook(CreateBookRequest bookRequest) {
+        if (bookRequest == null
+                || bookRequest.getTitle() == null
+                || bookRequest.getGenre() == null
+                || bookRequest.getPrice() == null
+                || bookRequest.getAuthorId() == null)
+            throw new IllegalArgumentException("Mandatory fields are missing");
+
         var author = authorRepository.findById(bookRequest.getAuthorId());
-        if (author == null) {
-            throw new IllegalArgumentException("Author ID does not exist");
-        }
+        assureAuthorExists(author);
 
         var bookEntity = new Book();
         bookEntity.title = bookRequest.getTitle();
@@ -44,19 +52,24 @@ public class BookService {
         return bookMapper.toDto(bookEntity);
     }
 
-    public BookDto updateBook(BookDto bookDto) {
-        var bookEntity = bookRepository.findById(bookDto.getId());
-        if (bookEntity == null) {
-            return null;
-        }
-        var author = authorRepository.findById(bookDto.getAuthorId());
-        if (author == null) {
-            throw new IllegalArgumentException("Author ID does not exist");
-        }
+    public BookDto updateBook(Long id, UpdateBookRequest bookRequest) {
+        if (bookRequest == null
+                || bookRequest.getTitle() == null
+                || bookRequest.getGenre() == null
+                || bookRequest.getPrice() == null
+                || bookRequest.getAuthorId() == null)
+            throw new IllegalArgumentException("Mandatory fields are missing");
 
-        bookEntity.title = bookDto.getTitle();
-        bookEntity.genre = bookDto.getGenre();
-        bookEntity.price = bookDto.getPrice();
+        var bookEntity = bookRepository.findById(id);
+        if (bookEntity == null)
+            throw new NotFoundException("Book ID does not exist");
+
+        var author = authorRepository.findById(bookRequest.getAuthorId());
+        assureAuthorExists(author);
+
+        bookEntity.title = bookRequest.getTitle();
+        bookEntity.genre = bookRequest.getGenre();
+        bookEntity.price = bookRequest.getPrice();
         bookEntity.author = author;
         bookRepository.persist(bookEntity);
         return bookMapper.toDto(bookEntity);
@@ -65,5 +78,10 @@ public class BookService {
     public void deleteBook(Long id) {
         if (!bookRepository.deleteById(id))
             throw new IllegalArgumentException("Book ID does not exist");
+    }
+
+    private void assureAuthorExists(Author author) {
+        if (author == null)
+            throw new IllegalArgumentException("Author ID does not exist");
     }
 }

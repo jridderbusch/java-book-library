@@ -1,4 +1,4 @@
-package jr.examples.controllers.model;
+package jr.examples.controllers.model.create;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class CreateBookRequest {
     @Schema(description = "Genre of the book", required = true)
     private String genre;
     @Schema(description = "Price of the book", required = true)
-    private double price;
+    private Double price;
     @Schema(description = "Reference to the author of the book", required = true)
     private Long authorId;
 }

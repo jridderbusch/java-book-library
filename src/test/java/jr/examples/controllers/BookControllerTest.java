@@ -117,9 +117,9 @@ class BookControllerTest {
         var authorId = authorRepository.findAll().list().get(0).id; // Get existing author ID
         given()
                 .contentType("application/json")
-                .body(String.format("{\"id\":%d, \"title\":\"Updated Test Book\", \"genre\":\"Fantasy\", \"price\":24.99, \"authorId\":%d}", bookId, authorId))
+                .body(String.format("{\"title\":\"Updated Test Book\", \"genre\":\"Fantasy\", \"price\":24.99, \"authorId\":%d}", authorId))
                 .when()
-                .put("/api/v1/book")
+                .put(String.format("/api/v1/book/%d", bookId))
                 .then()
                 .statusCode(200)
                 .body("title", Matchers.is("Updated Test Book"))
@@ -133,9 +133,9 @@ class BookControllerTest {
         var bookId = bookRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .contentType("application/json")
-                .body(String.format("{\"id\":%d}", bookId)) // Missing required fields
+                .body("{}") // Missing required fields
                 .when()
-                .put("/api/v1/book")
+                .put(String.format("/api/v1/book/%d", bookId))
                 .then()
                 .statusCode(400);
     }

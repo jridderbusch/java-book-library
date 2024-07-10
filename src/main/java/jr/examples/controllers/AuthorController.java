@@ -13,25 +13,25 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jr.examples.controllers.model.create.CreateBookRequest;
-import jr.examples.controllers.model.update.UpdateBookRequest;
-import jr.examples.services.BookService;
+import jr.examples.controllers.model.create.CreateAuthorRequest;
+import jr.examples.controllers.model.update.UpdateAuthorRequest;
+import jr.examples.services.AuthorService;
 
-@Path("/api/v1/book")
-public class BookController {
+@Path("/api/v1/author")
+public class AuthorController {
     @Inject
     ResponseUtils responseUtils;
     @Inject
-    BookService bookService;
+    AuthorService authorService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createBook(CreateBookRequest bookRequest) {
+    public Response createAuthor(CreateAuthorRequest authorRequest) {
         try {
-            var bookDto = bookService.createBook(bookRequest);
-            return Response.ok(bookDto).build();
+            var authorDto = authorService.createAuthor(authorRequest);
+            return Response.ok(authorDto).build();
         } catch (IllegalArgumentException e) {
             return responseUtils.badRequest(e.getMessage());
         }
@@ -39,21 +39,21 @@ public class BookController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBooks() {
-        return Response.ok(bookService.getAllBooks()).build();
+    public Response getAuthors() {
+        return Response.ok(authorService.getAllAuthors()).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBookById(@PathParam("id") Long id) {
+    public Response getAuthorById(@PathParam("id") Long id) {
         if (id == null)
             return responseUtils.badRequest("ID cannot be empty");
 
-        var bookDto = bookService.getBookById(id);
-        if (bookDto != null)
-            return Response.ok(bookDto).build();
-        return responseUtils.notFound("Book ID does not exist");
+        var authorDto = authorService.getAuthorById(id);
+        if (authorDto != null)
+            return Response.ok(authorDto).build();
+        return responseUtils.notFound("Author ID does not exist");
     }
 
     @PUT
@@ -61,13 +61,13 @@ public class BookController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response updateBook(@PathParam("id") Long id, UpdateBookRequest bookRequest) {
+    public Response updateAuthor(@PathParam("id") Long id, UpdateAuthorRequest authorRequest) {
         if (id == null)
             return responseUtils.badRequest("ID cannot be empty");
 
         try {
-            var updatedBookDto = bookService.updateBook(id, bookRequest);
-            return Response.ok(updatedBookDto).build();
+            var updatedAuthorDto = authorService.updateAuthor(id, authorRequest);
+            return Response.ok(updatedAuthorDto).build();
         } catch (NotFoundException e) {
             return responseUtils.notFound(e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -78,14 +78,14 @@ public class BookController {
     @DELETE
     @Path("/{id}")
     @Transactional
-    public Response deleteBook(@PathParam("id") Long id) {
+    public Response deleteAuthor(@PathParam("id") Long id) {
         if (id == null)
             return responseUtils.badRequest("ID cannot be empty");
 
         try {
-            bookService.deleteBook(id);
+            authorService.deleteAuthor(id);
         } catch (IllegalArgumentException e) {
-            return responseUtils.notFound("Book ID does not exist");
+            return responseUtils.notFound("Author ID does not exist");
         }
 
         return Response.ok().build();

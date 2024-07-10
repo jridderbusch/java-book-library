@@ -13,7 +13,7 @@ public class Book extends PanacheEntity {
     @Column(nullable = false)
     public String genre;
     @Column(nullable = false)
-    public double price;
+    public Double price;
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     public Author author;
