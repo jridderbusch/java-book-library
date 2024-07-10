@@ -5,6 +5,4 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jr.examples.entities.Author;
 
 @ApplicationScoped
-public class AuthorRepository implements PanacheRepository<Author> {
-
-}
+public class AuthorRepository implements PanacheRepository<Author> {}
