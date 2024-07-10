@@ -31,7 +31,7 @@ public class BookService {
             throw new IllegalArgumentException("Mandatory fields are missing");
 
         var author = authorRepository.findById(bookRequest.getAuthorId());
-        assureAuthorExists(author);
+        assertAuthorExists(author);
 
         var bookEntity = new Book();
         bookEntity.title = bookRequest.getTitle();
@@ -65,7 +65,7 @@ public class BookService {
             throw new NotFoundException("Book ID does not exist");
 
         var author = authorRepository.findById(bookRequest.getAuthorId());
-        assureAuthorExists(author);
+        assertAuthorExists(author);
 
         bookEntity.title = bookRequest.getTitle();
         bookEntity.genre = bookRequest.getGenre();
@@ -80,7 +80,7 @@ public class BookService {
             throw new IllegalArgumentException("Book ID does not exist");
     }
 
-    private void assureAuthorExists(Author author) {
+    private void assertAuthorExists(Author author) {
         if (author == null)
             throw new IllegalArgumentException("Author ID does not exist");
     }
