@@ -12,4 +12,8 @@ public class ResponseUtils {
     public Response notFound(String message) {
         return Response.status(Response.Status.NOT_FOUND).entity(message).build();
     }
+
+    public Response forbidden(String message) {
+        return Response.status(Response.Status.FORBIDDEN).entity(message).build();
+    }
 }
