@@ -2,6 +2,7 @@ package jr.examples.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import jr.examples.controllers.model.BookDto;
 import jr.examples.controllers.model.create.CreateBookRequest;
 import jr.examples.controllers.model.update.UpdateBookRequest;
@@ -22,6 +23,13 @@ public class BookService {
     BookMapper bookMapper;
 
     public BookDto createBook(CreateBookRequest bookRequest) {
+        if (bookRequest == null
+                || bookRequest.getTitle() == null
+                || bookRequest.getGenre() == null
+                || bookRequest.getPrice() == null
+                || bookRequest.getAuthorId() == null)
+            throw new IllegalArgumentException("Mandatory fields are missing.");
+
         var author = authorRepository.findById(bookRequest.getAuthorId());
         assureAuthorExists(author);
 
@@ -45,8 +53,16 @@ public class BookService {
     }
 
     public BookDto updateBook(Long id, UpdateBookRequest bookRequest) {
+        if (bookRequest == null
+                || bookRequest.getTitle() == null
+                || bookRequest.getGenre() == null
+                || bookRequest.getPrice() == null
+                || bookRequest.getAuthorId() == null)
+            throw new IllegalArgumentException("Mandatory fields are missing.");
+
         var bookEntity = bookRepository.findById(id);
-        if (bookEntity == null) return null;
+        if (bookEntity == null)
+            throw new NotFoundException("Book ID does not exist");
 
         var author = authorRepository.findById(bookRequest.getAuthorId());
         assureAuthorExists(author);

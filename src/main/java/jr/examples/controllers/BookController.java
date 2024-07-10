@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -32,7 +33,7 @@ public class BookController {
             var bookDto = bookService.createBook(bookRequest);
             return Response.ok(bookDto).build();
         } catch (IllegalArgumentException e) {
-            return responseUtils.badRequest("Author ID does not exist");
+            return responseUtils.badRequest(e.getMessage());
         }
     }
 
@@ -66,11 +67,11 @@ public class BookController {
 
         try {
             var updatedBookDto = bookService.updateBook(id, bookRequest);
-            if (updatedBookDto != null)
-                return Response.ok(updatedBookDto).build();
-            return responseUtils.notFound("Book ID does not exist");
+            return Response.ok(updatedBookDto).build();
+        } catch (NotFoundException e) {
+            return responseUtils.notFound(e.getMessage());
         } catch (IllegalArgumentException e) {
-            return responseUtils.badRequest("Author ID does not exist");
+            return responseUtils.badRequest(e.getMessage());
         }
     }
 
