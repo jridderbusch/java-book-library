@@ -1,4 +1,4 @@
-package jr.examples.controllers.model;
+package jr.examples.controllers.model.update;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +8,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "CreateBookRequest", description = "Information to create a book.")
-public class CreateBookRequest {
+@Schema(name = "UpdateBookRequest", description = "Information to update a book.")
+public class UpdateBookRequest {
     @Schema(description = "Title of the book", required = true)
     private String title;
     @Schema(description = "Genre of the book", required = true)

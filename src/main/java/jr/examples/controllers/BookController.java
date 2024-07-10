@@ -12,8 +12,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jr.examples.controllers.model.BookDto;
-import jr.examples.controllers.model.CreateBookRequest;
+import jr.examples.controllers.model.create.CreateBookRequest;
+import jr.examples.controllers.model.update.UpdateBookRequest;
 import jr.examples.services.BookService;
 
 @Path("/api/v1/book")
@@ -56,12 +56,16 @@ public class BookController {
     }
 
     @PUT
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response updateBook(BookDto bookDto) {
+    public Response updateBook(@PathParam("id") Long id, UpdateBookRequest bookRequest) {
+        if (id == null)
+            return responseUtils.badRequest("ID cannot be empty");
+
         try {
-            var updatedBookDto = bookService.updateBook(bookDto);
+            var updatedBookDto = bookService.updateBook(id, bookRequest);
             if (updatedBookDto != null)
                 return Response.ok(updatedBookDto).build();
             return responseUtils.notFound("Book ID does not exist");
