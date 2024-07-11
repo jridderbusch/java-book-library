@@ -1,0 +1,44 @@
+services:
+  library-service:
+    image: jr-example/java-library
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    depends_on:
+      library-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/q/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      quarkus.datasource.jdbc.url: jdbc:postgresql://library-db/${DB_NAME}
+      quarkus.datasource.username: ${DB_USER}
+      quarkus.datasource.password: ${DB_PASS}
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    networks: [ default ]
+
+  library-db:
+    image: postgres:16
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    restart: on-failure
+    networks: [ default ]
+    volumes:
+      - library-data:/var/lib/postgresql/data
+
+networks:
+  default:
+
+volumes:
+  library-data:

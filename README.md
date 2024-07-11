@@ -1,62 +1,36 @@
 # java-book-library
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Example project for Java with Quarkus, Hibernate, PostgreSQL, Docker, Swagger UI and OpenAPI.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Information
 
-## Running the application in dev mode
+- Dockerfile: [src/main/docker/Dockerfile.jvm](src/main/docker/Dockerfile.jvm)
+- docker-compose.yml: [docker-compose.yml](docker-compose.yml)
+  - For simplicity, the image is built in the docker-compose.yml, in this project
+- `/swagger-ui` - Swagger UI
+- `/openapi` - OpenAPI documentation
+- `/api/v1/...` - All other API endpoints
 
-You can run your application in dev mode that enables live coding using:
-
-```shell script
-./gradlew quarkusDev
-```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
+## Building the application and run Docker Compose
 
 ```shell script
 ./gradlew build
+docker-compose up
 ```
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+## Running the application in dev mode
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
+  You can run your application in dev mode that enables live coding using:
 
 ```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
+  ./gradlew quarkusDev
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+## Packaging and running the application
 
-## Creating a native executable
-
-You can create a native executable using:
+  The application can be packaged using:
 
 ```shell script
-./gradlew build -Dquarkus.native.enabled=true
+  ./gradlew build
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/java-book-library-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
