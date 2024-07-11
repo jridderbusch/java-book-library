@@ -25,16 +25,19 @@ class BookControllerTest {
     @Inject
     BookRepository bookRepository;
 
+    private Book book;
+    private Author author;
+
     @BeforeEach
     @Transactional
     void setup() {
         // Attention: IDs get incremented for each test, since it is the same DB
-        Author author = new Author();
+        author = new Author();
         author.name = "John Doe";
         author.dob = OffsetDateTime.now();
         authorRepository.persist(author);
 
-        Book book = new Book();
+        book = new Book();
         book.title = "Test Book";
         book.genre = "Fiction";
         book.price = 19.99;
@@ -52,10 +55,9 @@ class BookControllerTest {
     @Test
     @TestTransaction
     void createBookWithValidDataShouldReturnCreatedBook() {
-        var authorId = authorRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .contentType("application/json")
-                .body(String.format("{\"title\":\"Test Book 2\", \"genre\":\"Science\", \"price\":24.99, \"authorId\":%d}", authorId))
+                .body(String.format("{\"title\":\"Test Book 2\", \"genre\":\"Science\", \"price\":24.99, \"authorId\":%d}", author.id))
                 .when()
                 .post("/api/v1/book")
                 .then()
@@ -91,13 +93,12 @@ class BookControllerTest {
     @Test
     @TestTransaction
     void getBookByIdWithValidIdShouldReturnBook() {
-        var bookId = bookRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .when()
-                .get(String.format("/api/v1/book/%d", bookId))
+                .get(String.format("/api/v1/book/%d", book.id))
                 .then()
                 .statusCode(200)
-                .body("id", Matchers.is(bookId.intValue()));
+                .body("id", Matchers.is(book.id.intValue()));
     }
 
     @Test
@@ -113,13 +114,11 @@ class BookControllerTest {
     @Test
     @TestTransaction
     void updateBookWithValidDataShouldReturnUpdatedBook() {
-        var bookId = bookRepository.findAll().list().get(0).id; // Get existing book ID
-        var authorId = authorRepository.findAll().list().get(0).id; // Get existing author ID
         given()
                 .contentType("application/json")
-                .body(String.format("{\"title\":\"Updated Test Book\", \"genre\":\"Fantasy\", \"price\":24.99, \"authorId\":%d}", authorId))
+                .body(String.format("{\"title\":\"Updated Test Book\", \"genre\":\"Fantasy\", \"price\":24.99, \"authorId\":%d}", author.id))
                 .when()
-                .put(String.format("/api/v1/book/%d", bookId))
+                .put(String.format("/api/v1/book/%d", book.id))
                 .then()
                 .statusCode(200)
                 .body("title", Matchers.is("Updated Test Book"))
@@ -130,12 +129,11 @@ class BookControllerTest {
     @Test
     @TestTransaction
     void updateBookWithInvalidDataShouldReturnBadRequest() {
-        var bookId = bookRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .contentType("application/json")
                 .body("{}") // Missing required fields
                 .when()
-                .put(String.format("/api/v1/book/%d", bookId))
+                .put(String.format("/api/v1/book/%d", book.id))
                 .then()
                 .statusCode(400);
     }
@@ -143,10 +141,9 @@ class BookControllerTest {
     @Test
     @TestTransaction
     void deleteBookWithValidIdShouldReturnOk() {
-        var bookId = bookRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .when()
-                .delete(String.format("/api/v1/book/%d", bookId))
+                .delete(String.format("/api/v1/book/%d", book.id))
                 .then()
                 .statusCode(200);
     }

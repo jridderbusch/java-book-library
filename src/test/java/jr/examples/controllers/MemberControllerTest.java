@@ -18,11 +18,13 @@ class MemberControllerTest {
     @Inject
     MemberRepository memberRepository;
 
+    private Member member;
+
     @BeforeEach
     @Transactional
     void setup() {
         // Attention: IDs get incremented for each test, since it is the same DB
-        Member member = new Member();
+        member = new Member();
         member.username = "JohnDoe";
         member.email = "johndoe@example.com";
         member.address = "123 Main St";
@@ -75,13 +77,12 @@ class MemberControllerTest {
     @Test
     @TestTransaction
     void getMemberByIdWithValidIdShouldReturnMember() {
-        var memberId = memberRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .when()
-                .get(String.format("/api/v1/member/%d", memberId))
+                .get(String.format("/api/v1/member/%d", member.id))
                 .then()
                 .statusCode(200)
-                .body("id", Matchers.is(memberId.intValue()));
+                .body("id", Matchers.is(member.id.intValue()));
     }
 
     @Test
@@ -97,12 +98,11 @@ class MemberControllerTest {
     @Test
     @TestTransaction
     void updateMemberWithValidDataShouldReturnUpdatedMember() {
-        var memberId = memberRepository.findAll().list().get(0).id; // Get existing member ID
         given()
                 .contentType("application/json")
                 .body("{\"username\":\"Updated Member\", \"email\":\"updatedmember@example.com\", \"address\":\"789 Pine St\", \"phoneNumber\":\"321-654-9870\"}")
                 .when()
-                .put(String.format("/api/v1/member/%d", memberId))
+                .put(String.format("/api/v1/member/%d", member.id))
                 .then()
                 .statusCode(200)
                 .body("username", Matchers.is("Updated Member"));
@@ -111,12 +111,11 @@ class MemberControllerTest {
     @Test
     @TestTransaction
     void updateMemberWithInvalidDataShouldReturnBadRequest() {
-        var memberId = memberRepository.findAll().list().get(0).id; // Get existing member ID
         given()
                 .contentType("application/json")
                 .body("{}") // Missing required fields
                 .when()
-                .put(String.format("/api/v1/member/%d", memberId))
+                .put(String.format("/api/v1/member/%d", member.id))
                 .then()
                 .statusCode(400);
     }
@@ -124,10 +123,9 @@ class MemberControllerTest {
     @Test
     @TestTransaction
     void deleteMemberWithValidIdShouldReturnOk() {
-        var memberId = memberRepository.findAll().list().get(0).id; // Get existing member ID
         given()
                 .when()
-                .delete(String.format("/api/v1/member/%d", memberId))
+                .delete(String.format("/api/v1/member/%d", member.id))
                 .then()
                 .statusCode(200);
     }

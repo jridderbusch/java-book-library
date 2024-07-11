@@ -20,11 +20,13 @@ class AuthorControllerTest {
     @Inject
     AuthorRepository authorRepository;
 
+    private Author author;
+
     @BeforeEach
     @Transactional
     void setup() {
         // Attention: IDs get incremented for each test, since it is the same DB
-        Author author = new Author();
+        author = new Author();
         author.name = "Jane Doe";
         author.dob = OffsetDateTime.now();
         authorRepository.persist(author);
@@ -75,13 +77,12 @@ class AuthorControllerTest {
     @Test
     @TestTransaction
     void getAuthorByIdWithValidIdShouldReturnAuthor() {
-        var authorId = authorRepository.findAll().list().get(0).id; // Get existing ID
         given()
                 .when()
-                .get(String.format("/api/v1/author/%d", authorId))
+                .get(String.format("/api/v1/author/%d", author.id))
                 .then()
                 .statusCode(200)
-                .body("id", Matchers.is(authorId.intValue()));
+                .body("id", Matchers.is(author.id.intValue()));
     }
 
     @Test
@@ -97,12 +98,11 @@ class AuthorControllerTest {
     @Test
     @TestTransaction
     void updateAuthorWithValidDataShouldReturnUpdatedAuthor() {
-        var authorId = authorRepository.findAll().list().get(0).id; // Get existing author ID
         given()
                 .contentType("application/json")
                 .body("{\"name\":\"Updated Author\", \"dob\":\"2022-03-10T12:15:50-04:00\"}")
                 .when()
-                .put(String.format("/api/v1/author/%d", authorId))
+                .put(String.format("/api/v1/author/%d", author.id))
                 .then()
                 .statusCode(200)
                 .body("name", Matchers.is("Updated Author"));
@@ -111,12 +111,11 @@ class AuthorControllerTest {
     @Test
     @TestTransaction
     void updateAuthorWithInvalidDataShouldReturnBadRequest() {
-        var authorId = authorRepository.findAll().list().get(0).id; // Get existing author ID
         given()
                 .contentType("application/json")
                 .body("{}") // Missing required fields
                 .when()
-                .put(String.format("/api/v1/author/%d", authorId))
+                .put(String.format("/api/v1/author/%d", author.id))
                 .then()
                 .statusCode(400);
     }
@@ -124,10 +123,9 @@ class AuthorControllerTest {
     @Test
     @TestTransaction
     void deleteAuthorWithValidIdShouldReturnOk() {
-        var authorId = authorRepository.findAll().list().get(0).id; // Get existing author ID
         given()
                 .when()
-                .delete(String.format("/api/v1/author/%d", authorId))
+                .delete(String.format("/api/v1/author/%d", author.id))
                 .then()
                 .statusCode(200);
     }
